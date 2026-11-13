@@ -1,0 +1,15 @@
+# Datos locales: base de datos, audios y contratos (nunca al repositorio)
+instance/
+*.db
+*.db-wal
+*.db-shm
+
+# Secretos
+.env
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+.pytest_cache/

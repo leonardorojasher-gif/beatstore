@@ -1,0 +1,29 @@
+# Integración continua en GitHub Actions: en cada push se ejecutan las pruebas
+# automatizadas y se revisan las dependencias en busca de vulnerabilidades conocidas.
+name: CI
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  pruebas:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - name: Instalar FFmpeg
+        run: sudo apt-get update && sudo apt-get install -y ffmpeg
+      - name: Instalar dependencias
+        run: pip install -r requirements.txt -r requirements-dev.txt
+      - name: Pruebas automatizadas
+        run: pytest -q
+      - name: Auditoría de dependencias (OWASP A03)
+        run: |
+          pip install pip-audit
+          pip-audit -r requirements.txt
