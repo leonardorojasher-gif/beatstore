@@ -1,0 +1,20 @@
+# Demo pública GRATUITA en Render (plan free, sin disco persistente).
+# Al arrancar carga las cuentas y los beats de prueba; los datos se reinician en cada arranque.
+# Para producción se usa render.yaml (plan con disco persistente).
+services:
+  - type: web
+    name: beatstore-demo
+    runtime: docker
+    plan: free
+    region: virginia
+    autoDeploy: true
+    healthCheckPath: /salud
+    envVars:
+      - key: APP_ENV
+        value: production
+      - key: SECRET_KEY
+        generateValue: true
+      - key: DEMO_AL_INICIAR
+        value: "1"
+      - key: WEB_WORKERS
+        value: "1"

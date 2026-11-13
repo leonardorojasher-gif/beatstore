@@ -95,6 +95,13 @@ Los discos persistentes de Render requieren un plan pagado (Starter). Para escal
 la base de datos se mueve a PostgreSQL gestionado y los archivos a un almacenamiento de objetos (S3),
 como se diseñó en la EV2; el código ya separa ambos con interfaces (`IAlmacenamiento`, repositorio SQL).
 
+### Demo pública gratuita (render-demo.yaml)
+
+Para mostrar el prototipo sin instalar nada: en Render, **New → Blueprint**, elige este repositorio y en
+**Blueprint Path** escribe `render-demo.yaml`. Usa el plan gratuito, sin disco: al arrancar copia las cuentas
+y los beats de prueba (generados al construir la imagen), y los datos se reinician en cada arranque. Si nadie
+la usa, la instancia se duerme y tarda alrededor de un minuto en despertar.
+
 ## Subir a GitHub
 
 ```bash

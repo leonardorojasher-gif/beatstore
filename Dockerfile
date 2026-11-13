@@ -17,7 +17,11 @@ COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 COPY app ./app
-COPY wsgi.py .
+COPY wsgi.py iniciar.sh ./
+
+# Datos de demostración pregenerados (solo se usan si DEMO_AL_INICIAR=1)
+RUN DATA_DIR=/srv/beatstore/demo_seed SECRET_KEY=solo-para-construir \
+    flask --app app cargar-demo --forzar
 
 # La aplicación no se ejecuta como root (mínimo privilegio)
 RUN useradd --create-home --uid 10001 beatstore \
@@ -26,4 +30,4 @@ RUN useradd --create-home --uid 10001 beatstore \
 USER beatstore
 
 EXPOSE 8000
-CMD ["sh", "-c", "gunicorn --bind 0.0.0.0:${PORT} --workers 2 --threads 4 --timeout 120 --access-logfile - wsgi:app"]
+CMD ["sh", "iniciar.sh"]
