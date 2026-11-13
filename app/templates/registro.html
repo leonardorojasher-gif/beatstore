@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block titulo %}Crear cuenta{% endblock %}
+{% block contenido %}
+<section class="tarjeta formulario">
+  <h1>Crear cuenta de artista</h1>
+  {% if errores %}<div class="alerta error"><ul>{% for e in errores %}<li>{{ e }}</li>{% endfor %}</ul></div>{% endif %}
+  <form method="post">
+    <input type="hidden" name="_csrf" value="{{ csrf_token() }}">
+    <label>Nombre o nombre artístico <input name="nombre" value="{{ datos.nombre or '' }}" maxlength="80" required></label>
+    <label>Correo <input type="email" name="email" value="{{ datos.email or '' }}" maxlength="254" autocomplete="username" required></label>
+    <label>Contraseña <input type="password" name="password" minlength="10" maxlength="128" autocomplete="new-password" required>
+      <small>Mínimo 10 caracteres, con letras y números.</small></label>
+    <label>Repite la contraseña <input type="password" name="confirmacion" minlength="10" maxlength="128" autocomplete="new-password" required></label>
+    <label class="check"><input type="checkbox" name="acepto" value="si" required>
+      Acepto los <a href="{{ url_for('publico.terminos') }}">términos de uso</a> y la
+      <a href="{{ url_for('publico.privacidad') }}">política de privacidad</a>.</label>
+    <button class="boton">Crear cuenta</button>
+  </form>
+</section>
+{% endblock %}

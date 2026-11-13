@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block titulo %}Beats{% endblock %}
+{% block contenido %}
+<h1>Panel del productor</h1>
+{% include "admin/_menu.html" %}
+<p><a class="boton" href="{{ url_for('admin.nuevo_beat') }}">+ Subir nuevo beat</a></p>
+<div class="tabla-envoltura">
+<table class="tabla">
+  <thead><tr><th>Beat</th><th>Género</th><th>BPM</th><th>Tonalidad</th><th>Estado</th><th></th></tr></thead>
+  <tbody>
+  {% for b in beats %}
+    <tr>
+      <td>{{ b.titulo }}</td><td>{{ b.genero }}</td><td>{{ b.bpm }}</td><td>{{ b.tonalidad }}</td>
+      <td><span class="estado {{ b.estado|lower }}">{{ b.estado|replace('_', ' ') }}</span></td>
+      <td><a href="{{ url_for('admin.editar_beat', beat_id=b.id) }}">Editar</a></td>
+    </tr>
+  {% else %}<tr><td colspan="6">Aún no hay beats.</td></tr>{% endfor %}
+  </tbody>
+</table>
+</div>
+{% endblock %}

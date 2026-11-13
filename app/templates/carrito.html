@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block titulo %}Carrito{% endblock %}
+{% block contenido %}
+<h1>Tu carrito</h1>
+{% if not items %}
+  <div class="tarjeta vacio">Tu carrito está vacío. <a href="{{ url_for('publico.catalogo') }}">Explorar beats</a></div>
+{% else %}
+<div class="tabla-envoltura">
+<table class="tabla">
+  <thead><tr><th>Beat</th><th>Licencia</th><th>Precio</th><th></th></tr></thead>
+  <tbody>
+  {% for i in items %}
+    <tr>
+      <td><a href="{{ url_for('publico.ficha', beat_id=i.beat_id) }}">{{ i.titulo }}</a><br><small>{{ i.genero }} · {{ i.bpm }} BPM</small></td>
+      <td>{{ i.licencia_nombre }}</td>
+      <td class="precio">{{ i.precio|clp }}</td>
+      <td>
+        <form method="post" action="{{ url_for('compra.quitar') }}">
+          <input type="hidden" name="_csrf" value="{{ csrf_token() }}">
+          <input type="hidden" name="licencia_id" value="{{ i.licencia_id }}">
+          <button class="enlace">Quitar</button>
+        </form>
+      </td>
+    </tr>
+  {% endfor %}
+  </tbody>
+  <tfoot><tr><th colspan="2">Total</th><th class="precio">{{ total|clp }}</th><th></th></tr></tfoot>
+</table>
+</div>
+
+<div class="tarjeta pago">
+  {% if not usuario %}
+    <p>Para pagar necesitas una cuenta (así podrás volver a descargar tus compras).</p>
+    <a class="boton" href="{{ url_for('auth.login', next=url_for('compra.carrito')) }}">Ingresar para pagar</a>
+    <a class="enlace-sec" href="{{ url_for('auth.registro') }}">o crear una cuenta</a>
+  {% else %}
+  <form method="post" action="{{ url_for('compra.checkout') }}">
+    <input type="hidden" name="_csrf" value="{{ csrf_token() }}">
+    <label class="check"><input type="checkbox" name="acepto_licencia" value="si" required>
+      Leí y acepto las condiciones de cada licencia y los <a href="{{ url_for('publico.terminos') }}">términos de uso</a>.</label>
+    <button class="boton grande">Pagar {{ total|clp }} con Webpay</button>
+    <p class="nota">Serás redirigido a la pasarela de pago. BeatStore no recibe ni guarda los datos de tu tarjeta.</p>
+  </form>
+  {% endif %}
+</div>
+{% endif %}
+{% endblock %}

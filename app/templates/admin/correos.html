@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block titulo %}Correos{% endblock %}
+{% block contenido %}
+<h1>Panel del productor</h1>
+{% include "admin/_menu.html" %}
+<p class="nota">Bandeja de salida del modo demostración. En la nube estos correos se envían por SMTP a través de un proveedor de correo transaccional.</p>
+{% for c in correos %}
+<article class="tarjeta correo">
+  <p class="meta">{{ c.fecha|fecha }} · Para: {{ c.destinatario }}</p>
+  <h3>{{ c.asunto }}</h3>
+  <pre>{{ c.cuerpo }}</pre>
+</article>
+{% else %}<div class="tarjeta vacio">Aún no se han enviado correos.</div>{% endfor %}
+{% endblock %}

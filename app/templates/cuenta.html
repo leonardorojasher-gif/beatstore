@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block titulo %}Mi cuenta{% endblock %}
+{% block contenido %}
+<section class="tarjeta formulario">
+  <h1>Mi cuenta</h1>
+  <dl class="datos">
+    <dt>Nombre</dt><dd>{{ usuario.nombre }}</dd>
+    <dt>Correo</dt><dd>{{ usuario.email }}</dd>
+    <dt>Rol</dt><dd>{{ usuario.rol|capitalize }}</dd>
+  </dl>
+  <h2>Tus datos personales</h2>
+  <p>Puedes descargar en cualquier momento todos los datos que BeatStore guarda sobre ti (derecho de acceso y portabilidad).</p>
+  <a class="boton secundario" href="{{ url_for('auth.exportar_mis_datos') }}">Descargar mis datos (JSON)</a>
+  <p class="nota">Para rectificar o eliminar tus datos escribe a privacidad@beatstore.cl. Los contratos de licencia se conservan 5 años por respaldo legal de ambas partes.</p>
+</section>
+{% endblock %}

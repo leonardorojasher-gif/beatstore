@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block titulo %}BeatStore{% endblock %} · BeatStore</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/app.css') }}">
+</head>
+<body>
+  <header class="barra">
+    <a class="marca" href="{{ url_for('publico.catalogo') }}"><span class="logo">▶</span> BeatStore <small>MH Beats</small></a>
+    <nav>
+      <a href="{{ url_for('publico.catalogo') }}">Catálogo</a>
+      {% if not usuario or usuario.rol == 'ARTISTA' %}
+        <a href="{{ url_for('compra.carrito') }}">Carrito{% if items_carrito %} <span class="burbuja">{{ items_carrito }}</span>{% endif %}</a>
+      {% endif %}
+      {% if usuario and usuario.rol == 'ARTISTA' %}<a href="{{ url_for('compra.mis_compras') }}">Mis compras</a>{% endif %}
+      {% if usuario and usuario.rol == 'PRODUCTOR' %}<a href="{{ url_for('admin.panel') }}">Panel del productor</a>{% endif %}
+      {% if usuario %}
+        <a href="{{ url_for('auth.cuenta') }}" class="usuario">{{ usuario.nombre }}</a>
+        <form method="post" action="{{ url_for('auth.logout') }}" class="en-linea">
+          <input type="hidden" name="_csrf" value="{{ csrf_token() }}">
+          <button class="enlace">Salir</button>
+        </form>
+      {% else %}
+        <a href="{{ url_for('auth.login') }}">Ingresar</a>
+        <a class="boton chico" href="{{ url_for('auth.registro') }}">Crear cuenta</a>
+      {% endif %}
+    </nav>
+  </header>
+
+  <main class="contenedor">
+    {% with mensajes = get_flashed_messages(with_categories=true) %}
+      {% for categoria, mensaje in mensajes %}<div class="alerta {{ categoria }}">{{ mensaje }}</div>{% endfor %}
+    {% endwith %}
+    {% block contenido %}{% endblock %}
+  </main>
+
+  <footer class="pie">
+    <p>BeatStore · Prototipo académico (Ingeniería de Software, INACAP) ·
+      <a href="{{ url_for('publico.terminos') }}">Términos</a> ·
+      <a href="{{ url_for('publico.privacidad') }}">Privacidad</a></p>
+  </footer>
+</body>
+</html>

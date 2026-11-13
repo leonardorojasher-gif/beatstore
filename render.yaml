@@ -1,0 +1,23 @@
+# Blueprint de Render (PaaS): crea el servicio web desde el repositorio de GitHub.
+# Cada push a la rama principal vuelve a construir y desplegar la aplicación.
+services:
+  - type: web
+    name: beatstore
+    runtime: docker
+    plan: starter            # los discos persistentes requieren un plan pagado
+    region: virginia
+    autoDeploy: true
+    healthCheckPath: /salud
+    envVars:
+      - key: APP_ENV
+        value: production
+      - key: SECRET_KEY
+        generateValue: true  # Render genera la clave; nunca queda en el repositorio
+      - key: DATA_DIR
+        value: /var/data
+      - key: CORREO_BACKEND
+        value: consola       # cambiar a "smtp" y agregar SMTP_* para enviar correos reales
+    disk:
+      name: beatstore-datos
+      mountPath: /var/data
+      sizeGB: 5

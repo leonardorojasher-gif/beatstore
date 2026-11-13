@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block titulo %}Editar {{ beat.titulo }}{% endblock %}
+{% block contenido %}
+<h1>Panel del productor</h1>
+{% include "admin/_menu.html" %}
+<section class="tarjeta formulario ancho">
+  <h2>{{ beat.titulo }} <span class="estado {{ beat.estado|lower }}">{{ beat.estado|replace('_', ' ') }}</span></h2>
+  {% if errores %}<div class="alerta error"><ul>{% for e in errores %}<li>{{ e }}</li>{% endfor %}</ul></div>{% endif %}
+  <audio controls preload="none" src="{{ url_for('publico.preview', beat_id=beat.id) }}"></audio>
+  <form method="post">
+    <input type="hidden" name="_csrf" value="{{ csrf_token() }}">
+    <label>Título <input name="titulo" maxlength="80" value="{{ beat.titulo }}" required></label>
+    <div class="fila3">
+      <label>Género <select name="genero">{% for g in generos %}<option {% if beat.genero == g %}selected{% endif %}>{{ g }}</option>{% endfor %}</select></label>
+      <label>BPM <input type="number" name="bpm" min="40" max="250" value="{{ beat.bpm }}" required></label>
+      <label>Tonalidad <select name="tonalidad">{% for t in tonalidades %}<option {% if beat.tonalidad == t %}selected{% endif %}>{{ t }}</option>{% endfor %}</select></label>
+    </div>
+    <label>Mood <select name="mood">{% for m in moods %}<option {% if beat.mood == m %}selected{% endif %}>{{ m }}</option>{% endfor %}</select></label>
+    <table class="tabla">
+      <thead><tr><th>Licencia</th><th>Precio (CLP)</th><th>Disponible</th></tr></thead>
+      <tbody>
+      {% for l in licencias %}
+        <tr><td>{{ l.nombre }}</td>
+          <td><input type="number" name="precio_{{ l.tipo }}" min="1000" step="1000" value="{{ l.precio }}" required></td>
+          <td><input type="checkbox" name="activa_{{ l.tipo }}" value="si" {% if l.activa %}checked{% endif %} {% if l.tipo in ('STEMS', 'EXCLUSIVA') and not beat.archivo_stems %}disabled{% endif %}></td></tr>
+      {% endfor %}
+      </tbody>
+    </table>
+    <button class="boton" name="accion" value="guardar">Guardar cambios</button>
+  </form>
+  {% if beat.estado != 'VENDIDO_EXCLUSIVO' %}
+  <form method="post" class="en-linea">
+    <input type="hidden" name="_csrf" value="{{ csrf_token() }}">
+    {% if beat.estado == 'PUBLICADO' %}<button class="boton secundario" name="accion" value="ocultar">Ocultar del catálogo</button>
+    {% else %}<button class="boton secundario" name="accion" value="publicar">Publicar en el catálogo</button>{% endif %}
+  </form>
+  {% else %}
+  <p class="nota">Este beat se vendió en exclusiva: quedó retirado de la venta de forma permanente.</p>
+  {% endif %}
+</section>
+{% endblock %}

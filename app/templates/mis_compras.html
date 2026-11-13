@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block titulo %}Mis compras{% endblock %}
+{% block contenido %}
+<h1>Mis compras</h1>
+{% if not compras %}
+  <div class="tarjeta vacio">Aún no tienes compras. <a href="{{ url_for('publico.catalogo') }}">Explorar beats</a></div>
+{% else %}
+<div class="tabla-envoltura">
+<table class="tabla">
+  <thead><tr><th>Orden</th><th>Beat</th><th>Licencia</th><th>Contrato</th><th>Descargas</th><th></th></tr></thead>
+  <tbody>
+  {% for c in compras %}
+    <tr>
+      <td>N.° {{ c.orden.id }}<br><small>{{ c.orden.pagada_en|fecha }}</small></td>
+      <td>{{ c.detalle.titulo }}</td>
+      <td>{{ c.detalle.licencia }}</td>
+      <td><small>{{ c.detalle.contrato_codigo or 'En preparación' }}</small></td>
+      <td>
+        {% if c.estado == 'VIGENTE' %}{{ c.enlace.descargas }} de {{ c.enlace.max_descargas }}<br><small>vence {{ c.enlace.expira_en|fecha }}</small>
+        {% elif c.estado == 'VENCIDO' %}Enlace vencido{% elif c.estado == 'AGOTADO' %}Sin descargas disponibles{% else %}—{% endif %}
+      </td>
+      <td>
+        {% if c.estado == 'VIGENTE' %}
+        <form method="post" action="{{ url_for('compra.descargar', detalle_id=c.detalle.id) }}">
+          <input type="hidden" name="_csrf" value="{{ csrf_token() }}"><button class="boton chico">Descargar ZIP</button>
+        </form>
+        {% elif c.puede_renovar %}
+        <form method="post" action="{{ url_for('compra.renovar', detalle_id=c.detalle.id) }}">
+          <input type="hidden" name="_csrf" value="{{ csrf_token() }}"><button class="boton chico secundario">Renovar enlace</button>
+        </form>
+        {% else %}<small>Contacta al productor</small>{% endif %}
+      </td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
+</div>
+<p class="nota">Cada enlace permite 5 descargas durante 7 días. El ZIP incluye los archivos de tu licencia y el contrato en PDF.</p>
+{% endif %}
+
+{% if otras %}
+<h2>Otros intentos de compra</h2>
+<div class="tabla-envoltura">
+<table class="tabla">
+  <thead><tr><th>Orden</th><th>Fecha</th><th>Estado</th><th>Motivo</th></tr></thead>
+  <tbody>{% for o in otras %}<tr><td>N.° {{ o.id }}</td><td>{{ o.creada_en|fecha }}</td><td><span class="estado {{ o.estado|lower }}">{{ o.estado }}</span></td><td><small>{{ o.motivo or '' }}</small></td></tr>{% endfor %}</tbody>
+</table>
+</div>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block titulo %}Panel del productor{% endblock %}
+{% block contenido %}
+<h1>Panel del productor</h1>
+{% include "admin/_menu.html" %}
+<div class="kpis">
+  <div class="tarjeta kpi"><span>Ventas totales</span><strong>{{ r.total|clp }}</strong></div>
+  <div class="tarjeta kpi"><span>Órdenes pagadas</span><strong>{{ r.ordenes }}</strong></div>
+  <div class="tarjeta kpi"><span>Beats publicados</span><strong>{{ r.publicados }}</strong></div>
+  <div class="tarjeta kpi"><span>Exclusivas vendidas</span><strong>{{ r.exclusivas }}</strong></div>
+</div>
+
+<div class="dos-columnas">
+  <section>
+    <h2>Ventas por tipo de licencia</h2>
+    <table class="tabla"><thead><tr><th>Licencia</th><th>Cantidad</th><th>Monto</th></tr></thead>
+      <tbody>{% for f in r.por_licencia %}<tr><td>{{ f.nombre }}</td><td>{{ f.cantidad }}</td><td class="precio">{{ f.monto|clp }}</td></tr>{% endfor %}</tbody>
+    </table>
+  </section>
+  <section>
+    <h2>Ventas por beat</h2>
+    <table class="tabla"><thead><tr><th>Beat</th><th>Ventas</th><th>Monto</th></tr></thead>
+      <tbody>{% for f in r.por_beat %}<tr><td>{{ f.titulo }}{% if f.estado == 'VENDIDO_EXCLUSIVO' %} <span class="estado anulada">exclusiva vendida</span>{% endif %}</td><td>{{ f.cantidad }}</td><td class="precio">{{ f.monto|clp }}</td></tr>{% endfor %}</tbody>
+    </table>
+  </section>
+</div>
+
+<h2>Últimas órdenes</h2>
+<div class="tabla-envoltura">
+<table class="tabla">
+  <thead><tr><th>Orden</th><th>Artista</th><th>Fecha</th><th>Total</th><th>Estado</th></tr></thead>
+  <tbody>{% for o in r.ultimas %}<tr><td>N.° {{ o.id }}</td><td>{{ o.nombre }}</td><td>{{ o.creada_en|fecha }}</td><td class="precio">{{ o.total|clp }}</td><td><span class="estado {{ o.estado|lower }}">{{ o.estado }}</span></td></tr>{% else %}<tr><td colspan="5">Aún no hay órdenes.</td></tr>{% endfor %}</tbody>
+</table>
+</div>
+<a class="boton secundario" href="{{ url_for('admin.exportar_ventas') }}">Exportar ventas (CSV para Excel)</a>
+{% endblock %}

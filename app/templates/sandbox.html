@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Pasarela de pago (sandbox)</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/app.css') }}">
+</head>
+<body class="sandbox">
+  <div class="sandbox-caja">
+    <p class="sandbox-aviso">AMBIENTE DE PRUEBAS · Simulación de Webpay Plus</p>
+    <h1>Pago en línea</h1>
+    <dl>
+      <dt>Comercio</dt><dd>BeatStore (MH Beats)</dd>
+      <dt>Orden de compra</dt><dd>N.° {{ tx.orden_id }}</dd>
+      <dt>Monto a pagar</dt><dd class="monto">{{ tx.monto|clp }}</dd>
+    </dl>
+    <p class="nota">En el sistema real aquí el comprador ingresa su tarjeta en el sitio de la pasarela. En este prototipo se simula la respuesta del banco.</p>
+    <form method="post" action="{{ url_for('sandbox.resolver') }}" class="sandbox-botones">
+      <input type="hidden" name="_csrf" value="{{ csrf_token() }}">
+      <input type="hidden" name="token_ws" value="{{ tx.token }}">
+      <button class="boton" name="accion" value="aprobar">Aprobar pago</button>
+      <button class="boton secundario" name="accion" value="rechazar">Rechazar pago</button>
+    </form>
+  </div>
+</body>
+</html>

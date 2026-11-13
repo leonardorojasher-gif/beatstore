@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block titulo %}Orden {{ orden.id }}{% endblock %}
+{% block contenido %}
+<section class="tarjeta resultado {{ orden.estado|lower }}">
+  {% if orden.estado == 'PAGADA' %}
+    <h1>¡Pago aprobado!</h1>
+    <p>Orden N.° {{ orden.id }} · Código de autorización {{ orden.codigo_autorizacion }} · Total {{ orden.total|clp }}</p>
+    <p>Generamos tus contratos y te enviamos el comprobante por correo. Ya puedes descargar tus archivos.</p>
+    <a class="boton" href="{{ url_for('compra.mis_compras') }}">Ir a Mis compras</a>
+  {% elif orden.estado == 'RECHAZADA' %}
+    <h1>El pago fue rechazado</h1>
+    <p>No se realizó ningún cobro. {{ orden.motivo or '' }}</p>
+    <a class="boton" href="{{ url_for('compra.carrito') }}">Volver al carrito</a>
+  {% elif orden.estado == 'ANULADA' %}
+    <h1>La compra no se pudo completar</h1>
+    <p>{{ orden.motivo }}</p>
+    <a class="boton" href="{{ url_for('compra.carrito') }}">Volver al carrito</a>
+  {% else %}
+    <h1>Pago pendiente</h1>
+    <p>Esta orden aún no se confirma.</p>
+  {% endif %}
+</section>
+<div class="tabla-envoltura">
+<table class="tabla">
+  <thead><tr><th>Beat</th><th>Licencia</th><th>Precio</th></tr></thead>
+  <tbody>{% for d in detalles %}<tr><td>{{ d.titulo }}</td><td>{{ d.licencia }}</td><td class="precio">{{ d.precio|clp }}</td></tr>{% endfor %}</tbody>
+</table>
+</div>
+{% endblock %}

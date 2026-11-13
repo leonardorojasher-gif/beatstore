@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block titulo %}{{ beat.titulo }}{% endblock %}
+{% block contenido %}
+<a class="enlace-sec" href="{{ url_for('publico.catalogo') }}">← Volver al catálogo</a>
+<section class="ficha tarjeta">
+  <div>
+    <p class="etiqueta">{{ beat.genero }}</p>
+    <h1>{{ beat.titulo }}</h1>
+    <p class="meta grande">{{ beat.bpm }} BPM · {{ beat.tonalidad }} · {{ beat.mood }}</p>
+    {% if beat.estado != 'PUBLICADO' %}<div class="alerta aviso">Este beat no está a la venta ({{ beat.estado|replace('_', ' ')|lower }}).</div>{% endif %}
+  </div>
+  <div class="reproductor">
+    <audio controls controlslist="nodownload noplaybackrate" preload="metadata" src="{{ url_for('publico.preview', beat_id=beat.id) }}"></audio>
+    <p class="nota">Preview completo con tag de voz. Al comprar recibes el archivo sin tag.</p>
+  </div>
+</section>
+
+<h2>Elige tu licencia</h2>
+<div class="tabla-envoltura">
+<table class="tabla licencias">
+  <thead><tr><th>Licencia</th><th>Archivos</th><th>Reproducciones</th><th>Monetización</th><th>Precio</th><th></th></tr></thead>
+  <tbody>
+  {% for l in licencias %}
+    <tr {% if l.es_exclusiva %}class="destacada"{% endif %}>
+      <td><strong>{{ l.nombre }}</strong>{% if l.es_exclusiva %}<br><small>El beat se retira de la venta</small>{% endif %}</td>
+      <td>{{ l.archivos }}</td>
+      <td>{{ l.limite_reproducciones }}</td>
+      <td>{{ l.monetizacion }}</td>
+      <td class="precio">{{ l.precio|clp }}</td>
+      <td>
+        {% if beat.estado == 'PUBLICADO' and (not usuario or usuario.rol == 'ARTISTA') %}
+        <form method="post" action="{{ url_for('compra.agregar') }}">
+          <input type="hidden" name="_csrf" value="{{ csrf_token() }}">
+          <input type="hidden" name="licencia_id" value="{{ l.id }}">
+          <button class="boton chico">Agregar al carrito</button>
+        </form>
+        {% endif %}
+      </td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
+</div>
+<p class="nota">Todas las licencias incluyen un contrato en PDF con tus datos y los del productor. Precios en pesos chilenos, IVA incluido.</p>
+{% endblock %}

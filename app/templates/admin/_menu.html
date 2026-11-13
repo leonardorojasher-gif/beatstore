@@ -1,0 +1,6 @@
+<nav class="submenu">
+  <a href="{{ url_for('admin.panel') }}" {% if request.endpoint == 'admin.panel' %}class="activo"{% endif %}>Resumen de ventas</a>
+  <a href="{{ url_for('admin.beats') }}" {% if request.endpoint in ('admin.beats', 'admin.nuevo_beat', 'admin.editar_beat') %}class="activo"{% endif %}>Beats y licencias</a>
+  <a href="{{ url_for('admin.auditoria') }}" {% if request.endpoint == 'admin.auditoria' %}class="activo"{% endif %}>Auditoría</a>
+  <a href="{{ url_for('admin.correos') }}" {% if request.endpoint == 'admin.correos' %}class="activo"{% endif %}>Correos enviados</a>
+</nav>
